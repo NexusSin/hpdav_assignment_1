@@ -6,7 +6,6 @@ export const getDataSet = createAsyncThunk('communities/fetchData', async (args,
   try{
     const response = await fetch('data/communities.csv');
     const responseText = await response.text();
-    console.log("loaded file length:" + responseText.length);
     const responseJson = Papa.parse(responseText,{header:true, dynamicTyping:true});
 
     // you can also dispatch any other reducer
@@ -15,7 +14,7 @@ export const getDataSet = createAsyncThunk('communities/fetchData', async (args,
     return responseJson.data.map((item,i)=>{return {...item,index:i}});
     // when a result is returned, extraReducer below is triggered with the case setSeoulBikeData.fulfilled
   }catch(error){
-    console.error("error catched in asyncThunk" + error);
+    console.error("error in asyncThunk:", error);
     return thunkAPI.rejectWithValue(error)
   }
 })
@@ -28,7 +27,7 @@ export const dataSetSlice = createSlice({
   },
   extraReducers: builder => {
     builder.addCase(getDataSet.pending, (state, action) => {
-      console.log("extraReducer getDataSet.pending");
+      // data loading in progress
       // do something with state, e.g. to change a status
     })
     builder.addCase(getDataSet.fulfilled, (state, action) => {
@@ -37,7 +36,7 @@ export const dataSetSlice = createSlice({
     builder.addCase(getDataSet.rejected, (state, action) => {
       // Add any fetched house to the array
       const error = action.payload
-      console.log("extraReducer getDataSet.rejected with error" + error);
+      console.error("getDataSet rejected:", error);
     })
   }
 })

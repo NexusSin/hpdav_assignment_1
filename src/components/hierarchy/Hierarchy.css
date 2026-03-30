@@ -1,0 +1,17 @@
+.hierarchyDivContainer {
+    height: 100%;
+    overflow: hidden;
+}
+
+.stateLabel, .packLabel, .treeLabel, .leafLabel {
+    pointer-events: none;
+    user-select: none;
+}
+
+.nodeG, .stateNodeG {
+    cursor: pointer;
+}
+
+.treeLink {
+    pointer-events: none;
+}

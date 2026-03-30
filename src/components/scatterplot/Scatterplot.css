@@ -1,3 +1,15 @@
 .scatterplotDivContainer{
     height: 100%;
 }
+
+.brushG .selection {
+    fill: steelblue;
+    fill-opacity: 0.15;
+    stroke: steelblue;
+    stroke-width: 1;
+}
+
+.axisLabel {
+    fill: #333;
+    font-weight: 500;
+}
