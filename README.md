@@ -1,72 +1,94 @@
-# HPDAV Individual Assignment — Interactive Data Visualizations
+# HPDAV Assignment 1 — Coordinated Multiview Visualization
 
-An interactive visualization tool for exploring the US Communities and Crime dataset. Built with React, D3.js, and Redux, based on the [Tuto5-MultiDim-Redux](https://github.com/nicolasmedoc/Tuto5-MultiDim-Redux.git) template by Nicolas Médoc.
+This repository contains my individual assignment for the **High Performance Data Analysis and Visualization (HPDAV)** course at the University of Luxembourg. It is a React, D3, and Redux application for interactive exploration of the **US Communities and Crime** dataset through coordinated multiple views.
 
-The app has two linked views: a scatterplot for comparing any two attributes, and a hierarchical view (treemap, circle packing, or tree layout) that groups communities by state. Brushing on one view highlights the corresponding data in the other.
+The application combines a scatterplot with a hierarchical visualization so that interactions in one view are reflected in the other. The hierarchy supports three layouts: **treemap**, **circle packing**, and **tree**, all built from communities grouped by state. 
 
-## Running the app
+## Features
 
-You need Node.js installed (v16 or newer).
-
-```bash
-# install dependencies
-npm install
-
-# start the dev server
-npm start
-```
-
-This opens the app at `http://localhost:5173` (Vite's default port).
-
-To build for production:
-
-```bash
-npm run build
-npm run serve
-```
-
-## How it works
-
-- Pick any two attributes from the dropdowns to set the scatterplot axes
-- Drag a rectangle on the scatterplot to brush-select communities — the hierarchy will highlight them
-- Click a node in the hierarchy to select it — the scatterplot will highlight the matching points
-- Switch between treemap, circle packing, and tree layouts using the layout dropdown
-- The hierarchy value attribute can also be changed independently
+- Interactive scatterplot with user-selectable x and y attributes.
+- Hierarchical view grouped by US state, with a user-selectable value attribute.
+- Three hierarchy layouts: treemap, circle packing, and node-link tree.
+- Brushing in the scatterplot highlights matching items in the hierarchy.
+- Clicking a hierarchy node highlights the corresponding communities in the scatterplot.
+- State-level selection is supported by selecting all leaf communities under a state node.
+- Tooltips and linked highlighting improve exploration across views.
 
 ## Dataset
 
-US Communities and Crime from the UCI Machine Learning Repository. 1,355 communities across 46 states, 100+ normalized attributes covering income, housing, policing, and crime rates. Missing values show up as "?" in the original CSV and get filtered out.
+The project uses the **US Communities and Crime** dataset loaded from `data/communities.csv`. The Redux data-loading slice parses the CSV with PapaParse, adds an `index` field to each row, and stores the result in the global state.
 
-## Tech stack
+For visualization, records with missing values (`?`, null, undefined, or non-numeric values for the active attributes) are filtered out before rendering. This filtering is applied both in the scatterplot and when building the hierarchical aggregation.
 
-- React 18
-- D3.js 7
-- Redux Toolkit
-- PapaParse (CSV parsing)
-- Vite (build tool)
+## Interaction design
+
+The scatterplot renders communities as points positioned by two selected quantitative attributes. A D3 brush lets the user select a rectangular region, and the brushed items are stored in Redux so the hierarchy can react immediately. 
+
+The hierarchical view is generated from the same dataset by grouping communities by state and assigning each leaf node the currently selected hierarchy value. Clicking a leaf selects one community, while clicking an internal state node selects all communities contained in that state.
+
+The application uses shared Redux state for `selectedItems`, `brushedItems`, and `hoveredItem`, which enables coordinated highlighting between both visualizations.
 
 ## Project structure
 
-```
+```text
 src/
-|
-|-- components/
-|   |-- scatterplot/       # Scatterplot-d3.js (D3 class) + ScatterplotContainer.jsx (React container)
-|   |-- hierarchy/         # Hierarchy-d3.js (D3 class) + HierarchyContainer.jsx (React container)
-|
-|-- redux/
-|   |-- DataSetSlice.js          # createAsyncThunk to load CSV data into the store
-|   |-- ItemInteractionSlice.js  # selectedItems[], brushedItems[], hoveredItem{}
-|
-|-- utils/
-|   |-- hierarchyBuilder.js      # groups communities by state using FIPS codes
-|
-|-- templates/             # separation of concerns template (Vis-d3.js + VisContainer.jsx)
-|
-|-- App.jsx
-|-- store.js
+├── components/
+│   ├── scatterplot/
+│   │   ├── Scatterplot-d3.js
+│   │   ├── Scatterplot.css
+│   │   └── ScatterplotContainer.jsx
+│   └── hierarchy/
+│       ├── Hierarchy-d3.js
+│       ├── Hierarchy.css
+│       └── HierarchyContainer.jsx
+├── redux/
+│   ├── DataSetSlice.js
+│   └── ItemInteractionSlice.js
+├── utils/
+│   └── hierarchyBuilder.js
+└── App.jsx
 ```
+
+The project follows a React-container plus D3-renderer structure, where React manages state and UI controls while D3 handles SVG rendering and interactions. Redux is used to synchronize selection and brushing across views.
+
+## Installation
+
+Make sure you have **Node.js** installed. The project dependencies include React 18, D3 7, Redux Toolkit, PapaParse, and Vite.
+
+Install dependencies:
+
+```bash
+npm install
+```
+
+Start the development server:
+
+```bash
+npm start
+```
+
+The project uses Vite as its development server and build tool. The package scripts define `start` as `vite`, `build` as `vite build`, and `serve` as `vite preview`.
+
+## Build
+
+Create a production build with:
+
+```bash
+npm run build
+```
+
+Preview the production build with:
+
+```bash
+npm run serve
+```
+
+## Repository contents
+
+In addition to the source code, the repository also includes the written submission files `report.pdf` and `report.docx`, along with an `images/` directory containing exported figures used for documentation.
 
 ## Author
 
-Fabio Dollaku — University of Luxembourg, HPDAV course, March 2026
+**Fabio Dollaku**  
+University of Luxembourg  
+HPDAV — March 2026
